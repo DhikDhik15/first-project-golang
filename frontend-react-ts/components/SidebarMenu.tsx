@@ -22,6 +22,7 @@ const SidebarMenu: FC = () => {
                     <Link to="/admin/dashboard" className="list-group-item list-group-item-action">Dashboard</Link>
 
                     <Link to="/admin/users" className="list-group-item list-group-item-action">Users</Link>
+                    <Link to="/admin/products" className="list-group-item list-group-item-action">Products</Link>
                     <a onClick={logout} className="list-group-item list-group-item-action" style={{ cursor: 'pointer' }}>Logout</a>
                 </div>
             </div>

@@ -28,7 +28,7 @@ const App: FC = () => {
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
               <li className="nav-item">
-                <a href="https://santrikoding.com" target="_blank" className="nav-link active" aria-current="page">SANTRIKODING.COM</a>
+                <a href="#" target="_blank" className="nav-link active" aria-current="page">Simple App</a>
               </li>
             </ul>
           </div>
