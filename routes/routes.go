@@ -42,5 +42,8 @@ func SetupRouter() *gin.Engine {
 	// route user delete
 	router.DELETE("/api/users/:id", middlewares.AuthMiddleware(), controllers.DeleteUser)
 
+	// route products
+	router.GET("/api/products", middlewares.AuthMiddleware(), controllers.FindProducts)
+
 	return router
 }
