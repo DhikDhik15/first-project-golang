@@ -31,6 +31,13 @@ import UsersEdit from "../views/admin/users/edit.tsx";
 //import view products
 import ProductsIndex from '../views/products/index.tsx';
 
+//import view products create
+import ProductsCreate from '../views/products/create.tsx';
+
+//import view products edit
+import ProductsEdit from '../views/products/edit.tsx';
+
+
 export default function AppRoutes() {
 
     // Menggunakan useContext untuk mendapatkan nilai dari AuthContext
@@ -77,6 +84,16 @@ export default function AppRoutes() {
             {/* route "/products" */}
             <Route path="/admin/products" element={
                 isAuthenticated ? <ProductsIndex /> : <Navigate to="/login" replace />
+            } />
+
+            {/* route "/products/create" */}
+            <Route path="/admin/products/create" element={
+                isAuthenticated ? <ProductsCreate /> : <Navigate to="/login" replace />
+            } />
+
+            {/* route "/products/update/:id" */}
+            <Route path="/admin/products/update/:id" element={
+                isAuthenticated ? <ProductsEdit /> : <Navigate to="/login" replace />
             } />
         </Routes>
     );

@@ -43,7 +43,7 @@ const ProductsIndex: FC = () => {
                                                 <td>{product.stock}</td>
                                                 <td>{product.description}</td>
                                                 <td className="text-center">
-                                                    <Link to={`/products/edit/${product.id}`} className="btn btn-sm btn-primary rounded-4 shadow-sm border-0 me-2">EDIT</Link>
+                                                    <Link to={`/admin/products/update/${product.id}`} className="btn btn-sm btn-primary rounded-4 shadow-sm border-0 me-2">UPDATE</Link>
                                                     <button className="btn btn-sm btn-danger rounded-4 shadow-sm border-0">DELETE</button>
                                                 </td>
                                             </tr>
