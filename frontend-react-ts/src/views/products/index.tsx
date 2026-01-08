@@ -9,8 +9,29 @@ import { useProduct, Product } from '../../hooks/product/UseProduct';
 import { Link } from 'react-router';
 
 import formatRupiah from '../../../helpers/amount';
+import { useProductDelete } from "../../hooks/product/useProductDelete";
+import { useQueryClient } from "@tanstack/react-query";
 
 const ProductsIndex: FC = () => {
+
+    //initialize useQueryClient
+    const queryClient = useQueryClient();
+
+    const { mutate, isPending } = useProductDelete();
+
+    //handle delete user
+    const deleteProduct = (id: number) => {
+        if (confirm("Are you sure you want to delete this user?")) {
+
+            //call useUserDelete
+            mutate(id, {
+                onSuccess: () => {
+                    //refetch data
+                    queryClient.invalidateQueries({ queryKey: ['products'] });
+                }
+            });
+        }
+    }
     return (
         <div className="container mt-5 mb-5">
             <div className="row">
@@ -44,7 +65,9 @@ const ProductsIndex: FC = () => {
                                                 <td>{product.description}</td>
                                                 <td className="text-center">
                                                     <Link to={`/admin/products/update/${product.id}`} className="btn btn-sm btn-primary rounded-4 shadow-sm border-0 me-2">UPDATE</Link>
-                                                    <button className="btn btn-sm btn-danger rounded-4 shadow-sm border-0">DELETE</button>
+                                                    <button onClick={() => deleteProduct(product.id)} disabled={isPending} className="btn btn-sm btn-danger rounded-4 shadow-sm border-0">
+                                                        {isPending ? 'DELETING...' : 'DELETE'}
+                                                    </button>
                                                 </td>
                                             </tr>
                                         ))
