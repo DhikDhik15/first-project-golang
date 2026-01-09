@@ -37,6 +37,9 @@ import ProductsCreate from '../views/products/create.tsx';
 //import view products edit
 import ProductsEdit from '../views/products/edit.tsx';
 
+//import view transactions
+import TransactionsIndex from '../views/transactions/index.tsx';
+
 
 export default function AppRoutes() {
 
@@ -94,6 +97,11 @@ export default function AppRoutes() {
             {/* route "/products/update/:id" */}
             <Route path="/admin/products/update/:id" element={
                 isAuthenticated ? <ProductsEdit /> : <Navigate to="/login" replace />
+            } />
+
+            {/* route "/transactions" */}
+            <Route path="/admin/transactions" element={
+                isAuthenticated ? <TransactionsIndex /> : <Navigate to="/login" replace />
             } />
         </Routes>
     );

@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"log"
 	"net/http"
 	"santrikoding/backend-api/database"
 	"santrikoding/backend-api/helpers"
@@ -14,14 +13,11 @@ import (
 
 func FindTransactions(c *gin.Context) {
 	var transactions []models.Transaction
-	var auth = c.MustGet("auth").(models.User)
 
 	database.DB.
 		Preload("User").
 		Preload("Product").
-		Where("user_id = ?", auth.Id).
 		Find(&transactions)
-	log.Println(transactions)
 	if transactions == nil {
 		c.JSON(http.StatusNotFound, structs.ErrorResponse{
 			Success: false,

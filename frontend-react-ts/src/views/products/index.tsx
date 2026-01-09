@@ -4,7 +4,7 @@ import { FC } from "react";
 //import SidebarMenu
 import SidebarMenu from '../../../components/SidebarMenu';
 
-import { useProduct, Product } from '../../hooks/product/UseProduct';
+import { useProduct, Product } from '../../hooks/product/useProduct';
 
 import { Link } from 'react-router';
 
