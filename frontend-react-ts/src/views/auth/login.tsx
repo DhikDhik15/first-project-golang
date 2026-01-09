@@ -2,7 +2,7 @@
 import { FC, useState, useContext, FormEvent } from 'react';
 
 //import hook useNavigate from react router
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 //import custom  hook useLogin from hooks
 import { useLogin } from "../../hooks/auth/useLogin";
@@ -96,6 +96,9 @@ export const Login: FC = () => {
                             <button type="submit" className="btn btn-primary w-100 rounded-4" disabled={isPending}>
                                 {isPending ? 'Loading...' : 'LOGIN'}
                             </button>
+                            <div className="text-center mt-3">
+                                <p>Don't have an account? <Link to="/register">Register</Link></p>
+                            </div>
                         </form>
                     </div>
                 </div>
