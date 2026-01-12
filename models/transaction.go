@@ -12,6 +12,9 @@ type Transaction struct {
 	Price     int       `json:"price" gorm:"not null"`
 	StartDate time.Time `json:"start_date" gorm:"not null"`
 	EndDate   time.Time `json:"end_date" gorm:"not null"`
+	IsReturn  bool      `json:"is_return" gorm:"not null"`
+	ReturnDate time.Time `json:"return_date" gorm:"default:null"`
+	IsLate    bool      `json:"is_late" gorm:"not null"`
 	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
 	UpdatedAt time.Time `json:"updated_at" gorm:"autoUpdateTime"`
 

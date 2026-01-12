@@ -3,6 +3,7 @@ package structs
 import "time"
 
 type TransactionCreateRequest struct {
+	UserID    uint      `json:"user_id" binding:"required"`
 	ProductID uint      `json:"product_id" binding:"required"`
 	Quantity  int       `json:"quantity" binding:"required"`
 	Price     int       `json:"price" binding:"required"`
@@ -10,6 +11,12 @@ type TransactionCreateRequest struct {
 	Status    string    `json:"status" binding:"required"`
 	StartDate time.Time `json:"start_date" binding:"required"`
 	EndDate   time.Time `json:"end_date" binding:"required"`
+}
+
+type TransactionUpdateRequest struct {
+	IsReturn   bool       `json:"is_return"`
+	ReturnDate *time.Time `json:"return_date" time_format:"2006-01-02"`
+	IsLate     bool       `json:"is_late"`
 }
 
 type TransactionResponse struct {

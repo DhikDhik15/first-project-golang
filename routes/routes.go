@@ -66,5 +66,8 @@ func SetupRouter() *gin.Engine {
 	// route transaction by id
 	router.GET("/api/transactions/:id", middlewares.AuthMiddleware(), controllers.FindTransactionById)
 
+	// route transaction update
+	router.PUT("/api/transactions/:id", middlewares.AuthMiddleware(), controllers.UpdateTransaction)
+
 	return router
 }

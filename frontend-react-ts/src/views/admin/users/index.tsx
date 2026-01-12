@@ -73,6 +73,7 @@ const UsersIndex: FC = () => {
                                         <th scope="col">Full Name</th>
                                         <th scope="col">Username</th>
                                         <th scope="col">Email Address</th>
+                                        <th scope="col">Role</th>
                                         <th scope="col" style={{ width: "20%" }}>Actions</th>
                                     </tr>
                                 </thead>
@@ -83,6 +84,7 @@ const UsersIndex: FC = () => {
                                                 <td>{user.name}</td>
                                                 <td>{user.username}</td>
                                                 <td>{user.email}</td>
+                                                <td>{user.role}</td>
                                                 <td className="text-center">
                                                     <Link to={`/admin/users/edit/${user.id}`} className="btn btn-sm btn-primary rounded-4 shadow-sm border-0 me-2">EDIT</Link>
                                                     <button onClick={() => handleDelete(user.id)} disabled={isPending} className="btn btn-sm btn-danger rounded-4 shadow-sm border-0">

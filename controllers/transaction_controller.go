@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
 	"santrikoding/backend-api/database"
 	"santrikoding/backend-api/helpers"
@@ -36,8 +37,6 @@ func FindTransactions(c *gin.Context) {
 func CreateTransaction(c *gin.Context) {
 	var req structs.TransactionCreateRequest
 
-	auth := c.MustGet("auth").(models.User)
-
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, structs.ErrorResponse{
 			Success: false,
@@ -57,7 +56,7 @@ func CreateTransaction(c *gin.Context) {
 	}
 
 	transaction := models.Transaction{
-		UserID:    auth.Id,
+		UserID:    req.UserID,
 		ProductID: req.ProductID,
 		Quantity:  req.Quantity,
 		Price:     req.Price,
@@ -115,6 +114,51 @@ func CreateTransaction(c *gin.Context) {
 		"data":    transaction,
 	})
 
+}
+
+func UpdateTransaction(c *gin.Context) {
+	id := c.Param("id")
+
+	var req structs.TransactionUpdateRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, structs.ErrorResponse{
+			Success: false,
+			Message: "Validation Errors",
+			Errors:  helpers.TranslateErrorMessage(err),
+		})
+		return
+	}
+
+	var transaction models.Transaction
+	database.DB.First(&transaction, id)
+	if transaction.ID == 0 {
+		c.JSON(http.StatusNotFound, structs.ErrorResponse{
+			Success: false,
+			Message: "Transaction not found",
+			Errors:  nil,
+		})
+		return
+	}
+
+	transaction.IsReturn = req.IsReturn
+	transaction.ReturnDate = *req.ReturnDate
+	transaction.IsLate = req.IsLate
+
+	if err := database.DB.Save(&transaction).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, structs.ErrorResponse{
+			Success: false,
+			Message: "Failed to update transaction",
+			Errors:  nil,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, structs.SuccessResponse{
+		Success: true,
+		Message: "Transaction updated successfully",
+		Data:    transaction,
+	})
 }
 
 func FindTransactionById(c *gin.Context) {

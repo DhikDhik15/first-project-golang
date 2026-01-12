@@ -13,6 +13,7 @@ export interface User {
     name: string;
     username: string;
     email: string;
+    role: string;
 }
 
 //hook useUsers dengan return type User
