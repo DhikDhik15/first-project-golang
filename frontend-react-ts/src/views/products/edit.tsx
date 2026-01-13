@@ -95,11 +95,11 @@ const ProductEdit: FC = () => {
                                     {errors.stock && <div className="alert alert-danger mt-2 rounded-4">{errors.stock}</div>}
                                 </div>
 
-                                <button type="submit" className="btn btn-md btn-primary rounded-4 shadow-sm border-0" disabled={isPending}>
+                                <button type="submit" className="btn btn-md btn-primary shadow-sm border-0" disabled={isPending}>
                                     {isPending ? 'Updating...' : 'Update'}
                                 </button>
 
-                                <Link to="/products" className="btn btn-md btn-secondary rounded-4 shadow-sm border-0 ms-2">Cancel</Link>
+                                <Link to="/admin/products" className="btn btn-md btn-secondary shadow-sm border-0 ms-2">Cancel</Link>
 
                             </form>
                         </div>

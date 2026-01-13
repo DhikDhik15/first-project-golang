@@ -11,6 +11,9 @@ import { Link } from 'react-router';
 import formatRupiah from '../../../helpers/amount';
 import { useProductDelete } from "../../hooks/product/useProductDelete";
 import { useQueryClient } from "@tanstack/react-query";
+import { FaCartPlus } from "react-icons/fa6";
+import { PiNotePencilDuotone } from "react-icons/pi";
+import { BiTrash } from "react-icons/bi";
 
 const ProductsIndex: FC = () => {
 
@@ -42,7 +45,7 @@ const ProductsIndex: FC = () => {
                     <div className="card border-0 rounded-4 shadow-sm">
                         <div className="card-header d-flex justify-content-between align-items-center">
                             <span>PRODUCTS</span>
-                            <Link to="/admin/products/create" className="btn btn-sm btn-success rounded-4 shadow-sm border-0">ADD PRODUCT</Link>
+                            <Link to="/admin/products/create" className="btn btn-sm btn-success shadow-sm border-0" style={{ display: "flex", alignItems: "center", gap: "5px" }}><FaCartPlus /> ADD PRODUCT</Link>
                         </div>
                         <div className="card-body">
                             <table className="table table-bordered">
@@ -52,7 +55,7 @@ const ProductsIndex: FC = () => {
                                         <th scope="col">Price</th>
                                         <th scope="col">Stock</th>
                                         <th scope="col">Description</th>
-                                        <th scope="col" style={{ width: "20%" }}>Actions</th>
+                                        <th scope="col" style={{ width: "10%" }}>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -64,10 +67,8 @@ const ProductsIndex: FC = () => {
                                                 <td>{product.stock}</td>
                                                 <td>{product.description}</td>
                                                 <td className="text-center">
-                                                    <Link to={`/admin/products/update/${product.id}`} className="btn btn-sm btn-primary rounded-4 shadow-sm border-0 me-2">UPDATE</Link>
-                                                    <button onClick={() => deleteProduct(product.id)} disabled={isPending} className="btn btn-sm btn-danger rounded-4 shadow-sm border-0">
-                                                        {isPending ? 'DELETING...' : 'DELETE'}
-                                                    </button>
+                                                    <Link to={`/admin/products/update/${product.id}`}><PiNotePencilDuotone className="text-warning" size={20} /></Link>
+                                                    <button onClick={() => deleteProduct(product.id)} disabled={isPending} className="btn btn-sm"><BiTrash className="text-danger" size={20} /></button>
                                                 </td>
                                             </tr>
                                         ))

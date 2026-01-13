@@ -14,6 +14,7 @@ export interface User {
     username: string;
     email: string;
     role: string;
+    address?: string;
 }
 
 //hook useUsers dengan return type User
@@ -36,10 +37,10 @@ export const useUsers = () => {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            
+
             //return data
             return response.data.data as User[];
         },
-        
+
     });
 }

@@ -7,6 +7,8 @@ type UserResponse struct {
 	Username  string  `json:"username"`
 	Email     string  `json:"email"`
 	Role      string  `json:"role"`
+	Address   string  `json:"address"`
+	Phone     string  `json:"phone"`
 	CreatedAt string  `json:"created_at"`
 	UpdatedAt string  `json:"updated_at"`
 	Token     *string `json:"token,omitempty"`
@@ -18,6 +20,8 @@ type UserCreateRequest struct {
 	Username string `json:"username" binding:"required" gorm:"unique;not null"`
 	Email    string `json:"email" binding:"required" gorm:"unique;not null"`
 	Role     string `json:"role"`
+	Address  string `json:"address"`
+	Phone    string `json:"phone"`
 	Password string `json:"password" binding:"required"`
 }
 
@@ -27,6 +31,8 @@ type UserUpdateRequest struct {
 	Username string `json:"username" binding:"required" gorm:"unique;not null"`
 	Email    string `json:"email" binding:"required" gorm:"unique;not null"`
 	Role     string `json:"role"`
+	Address  string `json:"address"`
+	Phone    string `json:"phone"`
 	Password string `json:"password,omitempty"`
 }
 

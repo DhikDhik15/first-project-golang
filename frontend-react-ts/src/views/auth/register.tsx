@@ -123,8 +123,7 @@ const Register: FC = () => {
                                     </div>
                                     <div className="mb-3">
                                         <div className="form-group">
-                                            <label className="mb-1 fw-bold">Role User</label>
-                                            <input type="text" value={role} className="form-control" placeholder="User" readOnly />
+                                            <input type="hidden" value={role} className="form-control" placeholder="User" readOnly />
                                         </div>
                                     </div>
                                 </div>

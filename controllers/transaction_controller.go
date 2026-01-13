@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"log"
 	"net/http"
 	"santrikoding/backend-api/database"
 	"santrikoding/backend-api/helpers"

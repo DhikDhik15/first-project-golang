@@ -32,6 +32,8 @@ func Register(c *gin.Context) {
 		Username: req.Username,
 		Email:    req.Email,
 		Role:     req.Role,
+		Address:  req.Address,
+		Phone:    req.Phone,
 		Password: helpers.HashPassword(req.Password),
 	}
 
@@ -68,6 +70,9 @@ func Register(c *gin.Context) {
 			Name:      user.Name,
 			Username:  user.Username,
 			Email:     user.Email,
+			Role:      user.Role,
+			Address:   user.Address,
+			Phone:     user.Phone,
 			CreatedAt: user.CreatedAt.Format("2006-01-02 15:04:05"),
 			UpdatedAt: user.UpdatedAt.Format("2006-01-02 15:04:05"),
 		},
