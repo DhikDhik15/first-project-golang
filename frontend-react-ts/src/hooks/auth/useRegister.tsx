@@ -11,6 +11,8 @@ interface RegisterRequest {
     email: string;
     password: string;
     role: string;
+    address: string;
+    phone: string;
 }
 
 export const useRegister = () => {
