@@ -17,7 +17,7 @@ type UserCreateRequest struct {
 	Name     string `json:"name" binding:"required"`
 	Username string `json:"username" binding:"required" gorm:"unique;not null"`
 	Email    string `json:"email" binding:"required" gorm:"unique;not null"`
-	Role     string `json:"role" binding:"required"`
+	Role     string `json:"role"`
 	Password string `json:"password" binding:"required"`
 }
 
@@ -26,7 +26,7 @@ type UserUpdateRequest struct {
 	Name     string `json:"name" binding:"required"`
 	Username string `json:"username" binding:"required" gorm:"unique;not null"`
 	Email    string `json:"email" binding:"required" gorm:"unique;not null"`
-	Role     string `json:"role" binding:"required"`
+	Role     string `json:"role"`
 	Password string `json:"password,omitempty"`
 }
 

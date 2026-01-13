@@ -10,6 +10,7 @@ interface RegisterRequest {
     username: string;
     email: string;
     password: string;
+    role: string;
 }
 
 export const useRegister = () => {

@@ -13,7 +13,7 @@ import (
 // Register menangani proses registrasi user baru
 func Register(c *gin.Context) {
 	// Inisialisasi struct untuk menangkap data request
-	var req = structs.UserCreateRequest{}
+	var req structs.UserCreateRequest
 
 	// Validasi request JSON menggunakan binding dari Gin
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -31,11 +31,14 @@ func Register(c *gin.Context) {
 		Name:     req.Name,
 		Username: req.Username,
 		Email:    req.Email,
+		Role:     req.Role,
 		Password: helpers.HashPassword(req.Password),
 	}
 
 	// Simpan data user ke database
-	if err := database.DB.Create(&user).Error; err != nil {
+	tx := database.DB.Begin()
+	if err := tx.Create(&user).Error; err != nil {
+		tx.Rollback()
 		// Cek apakah error karena data duplikat (misalnya username/email sudah terdaftar)
 		if helpers.IsDuplicateEntryError(err) {
 			// Jika duplikat, kirimkan response 409 Conflict
@@ -54,6 +57,7 @@ func Register(c *gin.Context) {
 		}
 		return
 	}
+	tx.Commit()
 
 	// Jika berhasil, kirimkan response sukses
 	c.JSON(http.StatusCreated, structs.SuccessResponse{
