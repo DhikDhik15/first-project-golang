@@ -6,6 +6,7 @@ import (
 	"santrikoding/backend-api/helpers"
 	"santrikoding/backend-api/models"
 	"santrikoding/backend-api/structs"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -141,7 +142,7 @@ func UpdateTransaction(c *gin.Context) {
 	}
 
 	transaction.IsReturn = req.IsReturn
-	transaction.ReturnDate = *req.ReturnDate
+	transaction.ReturnDate = req.ReturnDate
 	transaction.IsLate = req.IsLate
 
 	if err := database.DB.Save(&transaction).Error; err != nil {
@@ -174,6 +175,75 @@ func FindTransactionById(c *gin.Context) {
 	c.JSON(http.StatusOK, structs.SuccessResponse{
 		Success: true,
 		Message: "Transaction found",
+		Data:    transaction,
+	})
+}
+
+func ProcessTransaction(c *gin.Context) {
+	id := c.Param("id")
+
+	var transaction models.Transaction
+	database.DB.First(&transaction, id)
+	if transaction.ID == 0 {
+		c.JSON(http.StatusNotFound, structs.ErrorResponse{
+			Success: false,
+			Message: "Transaction not found",
+			Errors:  nil,
+		})
+		return
+	}
+
+	// update to db
+	transaction.Status = "paid"
+	transaction.UpdatedAt = time.Now()
+
+	if transaction.ReturnDate == nil {
+		transaction.ReturnDate = &transaction.EndDate
+	}
+	if err := database.DB.Save(&transaction).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, structs.ErrorResponse{
+			Success: false,
+			Message: "Failed to update transaction",
+			Errors:  nil,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, structs.SuccessResponse{
+		Success: true,
+		Message: "Transaction processed successfully",
+		Data:    transaction,
+	})
+}
+
+func CancelTransaction(c *gin.Context) {
+	id := c.Param("id")
+
+	var transaction models.Transaction
+	database.DB.First(&transaction, id)
+	if transaction.ID == 0 {
+		c.JSON(http.StatusNotFound, structs.ErrorResponse{
+			Success: false,
+			Message: "Transaction not found",
+			Errors:  nil,
+		})
+		return
+	}
+
+	transaction.Status = "cancel"
+
+	if err := database.DB.Save(&transaction).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, structs.ErrorResponse{
+			Success: false,
+			Message: "Failed to update transaction",
+			Errors:  nil,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, structs.SuccessResponse{
+		Success: true,
+		Message: "Transaction cancelled successfully",
 		Data:    transaction,
 	})
 }

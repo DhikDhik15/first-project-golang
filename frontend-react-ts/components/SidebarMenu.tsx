@@ -32,9 +32,9 @@ const SidebarMenu: FC = () => {
                 <div className="card-body">
                     <div className="list-group">
                         <Link to="/admin/dashboard" className={`list-group-item list-group-item-action ${location.pathname === '/admin/dashboard' ? 'active' : ''}`} style={location.pathname === '/admin/dashboard' ? { backgroundColor: 'gray', borderColor: 'gray' } : {}}>Dashboard</Link>
-                        <Link to="/admin/users" className={`list-group-item list-group-item-action ${location.pathname === '/admin/users' ? 'active' : ''}`} style={location.pathname === '/admin/users' ? { backgroundColor: 'gray', borderColor: 'gray' } : {}}>Users</Link>
-                        <Link to="/admin/products" className={`list-group-item list-group-item-action ${location.pathname === '/admin/products' ? 'active' : ''}`} style={location.pathname === '/admin/products' ? { backgroundColor: 'gray', borderColor: 'gray' } : {}}>Products</Link>
-                        <Link to="/admin/transactions" className={`list-group-item list-group-item-action ${location.pathname === '/admin/transactions' ? 'active' : ''}`} style={location.pathname === '/admin/transactions' ? { backgroundColor: 'gray', borderColor: 'gray' } : {}}>Transactions</Link>
+                        <Link to="/admin/users" className={`list-group-item list-group-item-action ${location.pathname.startsWith('/admin/users') ? 'active' : ''}`} style={location.pathname.startsWith('/admin/users') ? { backgroundColor: 'gray', borderColor: 'gray' } : {}}>Users</Link>
+                        <Link to="/admin/products" className={`list-group-item list-group-item-action ${location.pathname.startsWith('/admin/products') ? 'active' : ''}`} style={location.pathname.startsWith('/admin/products') ? { backgroundColor: 'gray', borderColor: 'gray' } : {}}>Products</Link>
+                        <Link to="/admin/transactions" className={`list-group-item list-group-item-action ${location.pathname.startsWith('/admin/transactions') ? 'active' : ''}`} style={location.pathname.startsWith('/admin/transactions') ? { backgroundColor: 'gray', borderColor: 'gray' } : {}}>Transactions</Link>
                         <button onClick={() => setShowModal(true)} className="list-group-item list-group-item-action text-start" style={{ cursor: 'pointer', border: 'none', background: 'none', width: '100%' }}><b>Logout</b></button>
                     </div>
                 </div>
