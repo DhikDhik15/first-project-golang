@@ -75,5 +75,8 @@ func SetupRouter() *gin.Engine {
 	// route transaction cancel
 	router.PUT("/api/transactions/:id/cancel", middlewares.AuthMiddleware(), controllers.CancelTransaction)
 
+	// route transaction export
+	router.GET("/api/transactions/report", middlewares.AuthMiddleware(), controllers.ReportTransaction)
+
 	return router
 }
