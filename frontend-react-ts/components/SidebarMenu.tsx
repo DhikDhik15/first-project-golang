@@ -35,6 +35,7 @@ const SidebarMenu: FC = () => {
                         <Link to="/admin/users" className={`list-group-item list-group-item-action ${location.pathname.startsWith('/admin/users') ? 'active' : ''}`} style={location.pathname.startsWith('/admin/users') ? { backgroundColor: 'gray', borderColor: 'gray' } : {}}>Users</Link>
                         <Link to="/admin/products" className={`list-group-item list-group-item-action ${location.pathname.startsWith('/admin/products') ? 'active' : ''}`} style={location.pathname.startsWith('/admin/products') ? { backgroundColor: 'gray', borderColor: 'gray' } : {}}>Products</Link>
                         <Link to="/admin/transactions" className={`list-group-item list-group-item-action ${location.pathname.startsWith('/admin/transactions') ? 'active' : ''}`} style={location.pathname.startsWith('/admin/transactions') ? { backgroundColor: 'gray', borderColor: 'gray' } : {}}>Transactions</Link>
+                        <Link to="/admin/reports" className={`list-group-item list-group-item-action ${location.pathname.startsWith('/admin/report') ? 'active' : ''}`} style={location.pathname.startsWith('/admin/reports') ? { backgroundColor: 'gray', borderColor: 'gray' } : {}}>Reports</Link>
                         <button onClick={() => setShowModal(true)} className="list-group-item list-group-item-action text-start" style={{ cursor: 'pointer', border: 'none', background: 'none', width: '100%' }}><b>Logout</b></button>
                     </div>
                 </div>
@@ -54,8 +55,8 @@ const SidebarMenu: FC = () => {
                                     <p className="mb-0 fs-5">Are you sure you want to logout?</p>
                                 </div>
                                 <div className="modal-footer border-0 justify-content-center">
-                                    <button type="button" className="btn btn-secondary rounded-pill px-4" onClick={() => setShowModal(false)}>Cancel</button>
-                                    <button type="button" className="btn btn-danger rounded-pill px-4" onClick={handleLogout}>Yes, Logout</button>
+                                    <button type="button" className="btn btn-secondary px-4" onClick={() => setShowModal(false)}>Cancel</button>
+                                    <button type="button" className="btn btn-danger px-4" onClick={handleLogout}>Yes, Logout</button>
                                 </div>
                             </div>
                         </div>

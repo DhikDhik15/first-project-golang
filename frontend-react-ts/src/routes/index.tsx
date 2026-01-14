@@ -42,6 +42,7 @@ import TransactionsIndex from '../views/transactions/index.tsx';
 
 //import view transactions create
 import TransactionsCreate from '../views/transactions/create.tsx';
+import ReportsIndex from '../views/reports/index.tsx';
 
 
 export default function AppRoutes() {
@@ -110,6 +111,11 @@ export default function AppRoutes() {
             {/* route "/transactions/create" */}
             <Route path="/admin/transactions/create" element={
                 isAuthenticated ? <TransactionsCreate /> : <Navigate to="/login" replace />
+            } />
+
+            {/* route "/reports" */}
+            <Route path="/admin/reports" element={
+                isAuthenticated ? <ReportsIndex /> : <Navigate to="/login" replace />
             } />
         </Routes>
     );
