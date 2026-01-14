@@ -47,6 +47,8 @@ export const useTransaction = () => {
                 status: item.status,
                 start_date: item.start_date,
                 end_date: item.end_date,
+                is_return: item.is_return,
+                is_late: item.is_late,
                 user: {
                     id: item.User.id,
                     name: item.User.name,

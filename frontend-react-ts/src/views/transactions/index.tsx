@@ -3,65 +3,74 @@ import { FC, useState } from "react";
 import SidebarMenu from '../../../components/SidebarMenu';
 
 import { useTransaction, Transaction } from "../../hooks/transaction/useTransaction";
-import { useTransactionUpdate } from "../../hooks/transaction/useTransactionUpdate";
-
+import { useTransactionProcess } from "../../hooks/transaction/useTransactionProcess";
+import { useTransactionCancel } from "../../hooks/transaction/useTransactionCancel";
 import { formatDateID } from '../../../helpers/date';
 
 import formatRupiah from '../../../helpers/amount';
 import { Link } from "react-router";
 
-import { FaCheck, FaClock, FaPaperPlane } from "react-icons/fa";
+import { FaCheck, FaPaperPlane } from "react-icons/fa";
 import { ImCancelCircle } from "react-icons/im";
 import { LuClock3, LuFilePlus } from "react-icons/lu";
+import { useQueryClient } from "@tanstack/react-query";
 
 const TransactionsIndex: FC = () => {
 
     // state for process modal
     const [showModal, setShowModal] = useState(false);
-    const [transactionId, setTransactionId] = useState<number | null>(null);
+    const [selectedId, setSelectedId] = useState<number | null>(null);
+
+    const [isPending, setIsPending] = useState(false);
 
     // state for cancel modal
     const [showCancelModal, setShowCancelModal] = useState(false);
 
     // hook useTransaction
-    const { data: transactions, refetch } = useTransaction();
+    const { data: transactions } = useTransaction();
 
-    // hook useTransactionUpdate
-    const { mutate: updateTransaction, isPending } = useTransactionUpdate();
+    // hook useTransactionProcess
+    const { mutate: updateTransaction } = useTransactionProcess();
+    const { mutate: cancelTransaction } = useTransactionCancel();
+
+    const queryClient = useQueryClient();
 
     const handleProcess = (id: number) => {
-        setTransactionId(id);
+        setSelectedId(id);
         setShowModal(true);
     };
 
     const handleCancel = (id: number) => {
-        setTransactionId(id);
+        setSelectedId(id);
         setShowCancelModal(true);
     };
 
-    const confirmProcess = () => {
-        if (transactionId) {
-            updateTransaction({ id: transactionId, status: 'success' }, {
-                onSuccess: () => {
-                    refetch();
-                    setShowModal(false);
-                    setTransactionId(null);
-                }
-            });
-        }
+    const confirmProcess = async () => {
+        setIsPending(false);
+        updateTransaction({ id: selectedId, status: 'success' }, {
+            onSuccess: () => {
+                queryClient.invalidateQueries({
+                    queryKey: ['transactions'],
+                });
+                setShowModal(false);
+            }
+        });
     };
 
-    const confirmCancel = () => {
-        if (transactionId) {
-            updateTransaction({ id: transactionId, status: 'failed' }, {
-                onSuccess: () => {
-                    refetch();
-                    setShowCancelModal(false);
-                    setTransactionId(null);
-                }
-            });
-        }
+
+    const confirmCancel = async () => {
+        setIsPending(false);
+
+        cancelTransaction({ id: selectedId, status: 'failed' }, {
+            onSuccess: () => {
+                queryClient.invalidateQueries({
+                    queryKey: ['transactions'],
+                });
+                setShowCancelModal(false);
+            }
+        });
     };
+
 
     return (
         <div className="container mt-5 mb-5">
@@ -83,10 +92,10 @@ const TransactionsIndex: FC = () => {
                                         <th scope="col">Product</th>
                                         <th scope="col">Quantity</th>
                                         <th scope="col">Price</th>
-                                        <th scope="col">Payment</th>
+                                        <th scope="col" style={{ width: "11%" }}>Payment</th>
                                         <th scope="col">Start Date</th>
                                         <th scope="col">End Date</th>
-                                        <th scope="col">Status</th>
+                                        <th scope="col">Rent Status</th>
                                         <th scope="col" style={{ width: "5%" }}>Action</th>
                                     </tr>
                                 </thead>
@@ -99,28 +108,47 @@ const TransactionsIndex: FC = () => {
                                                 <td>{transaction.quantity}</td>
                                                 <td>{formatRupiah(transaction.price)}</td>
                                                 <td>
-                                                    {transaction.status === 'pending' ? (
-                                                        <>
-                                                            <LuClock3 /> {transaction.status}
-                                                        </>
-                                                    ) : (
-                                                        <>
-                                                            <FaCheck /> {transaction.status}
-                                                        </>
-                                                    )}
+                                                    {
+                                                        transaction.status === 'pending' ? (
+                                                            <>
+                                                                <LuClock3 className="text-warning" /> {transaction.status}
+                                                            </>
+                                                        ) : transaction.status === 'paid' ? (
+                                                            <>
+                                                                <FaCheck className="text-success" /> {transaction.status}
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <ImCancelCircle className="text-danger" /> {transaction.status}
+                                                            </>
+                                                        )
+                                                    }
                                                 </td>
                                                 <td>{formatDateID(transaction.start_date)}</td>
                                                 <td>{formatDateID(transaction.end_date)}</td>
-                                                <td className="text-center">
-                                                    {transaction.status === 'pending' ? (
-                                                        <FaClock className="text-warning" />
-                                                    ) : (
-                                                        <FaCheck className="text-success" />
-                                                    )}
-                                                </td>
+                                                <td>{transaction.is_return ? 'Returned' : 'Not Returned'}</td>
                                                 <td>
-                                                    <button onClick={() => handleProcess(transaction.id)} title="Process" className="btn p-0 border-0 bg-transparent" style={{ marginRight: "5px" }} ><FaPaperPlane className="text-primary" /></button>
-                                                    <button onClick={() => handleCancel(transaction.id)} title="Cancel" className="btn p-0 border-0 bg-transparent" style={{ marginRight: "5px" }} ><ImCancelCircle className="text-danger" /></button>
+                                                    {transaction.status !== 'paid' && (
+                                                        <>
+                                                            <button
+                                                                onClick={() => handleProcess(transaction.id)}
+                                                                title="Process"
+                                                                className="btn p-0 border-0 bg-transparent"
+                                                                style={{ marginRight: "5px" }}
+                                                            >
+                                                                <FaPaperPlane className="text-primary" />
+                                                            </button>
+
+                                                            <button
+                                                                onClick={() => handleCancel(transaction.id)}
+                                                                title="Cancel"
+                                                                className="btn p-0 border-0 bg-transparent"
+                                                                style={{ marginRight: "5px" }}
+                                                            >
+                                                                <ImCancelCircle className="text-danger" />
+                                                            </button>
+                                                        </>
+                                                    )}
                                                 </td>
                                             </tr>
                                         ))
@@ -138,22 +166,46 @@ const TransactionsIndex: FC = () => {
                     <div className="modal show d-block" tabIndex={-1} role="dialog">
                         <div className="modal-dialog modal-dialog-centered" role="document">
                             <div className="modal-content rounded-4 border-0 shadow">
+
                                 <div className="modal-header border-0">
                                     <h5 className="modal-title fw-bold">Process Order</h5>
-                                    <button type="button" className="btn-close" onClick={() => setShowModal(false)} aria-label="Close"></button>
+                                    <button
+                                        type="button"
+                                        className="btn-close"
+                                        onClick={() => setShowModal(false)}
+                                        aria-label="Close"
+                                    />
                                 </div>
+
                                 <div className="modal-body text-center">
-                                    <p className="mb-0 fs-5">Are you sure want to process this order?</p>
+                                    <p className="mb-0 fs-5">
+                                        Are you sure want to process this order?
+                                    </p>
                                 </div>
+
                                 <div className="modal-footer border-0 justify-content-center">
-                                    <button type="button" className="btn btn-secondary rounded-pill px-4" onClick={() => setShowModal(false)}>Cancel</button>
-                                    <button type="button" className="btn btn-primary rounded-pill px-4" onClick={confirmProcess} disabled={isPending}>
+                                    <button
+                                        type="button"
+                                        className="btn btn-secondary rounded-pill px-4"
+                                        onClick={() => setShowModal(false)}
+                                    >
+                                        Cancel
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        className="btn btn-primary rounded-pill px-4"
+                                        onClick={confirmProcess}
+                                        disabled={isPending}
+                                    >
                                         {isPending ? 'Processing...' : 'Yes, Process'}
                                     </button>
                                 </div>
+
                             </div>
                         </div>
                     </div>
+
                     <div className="modal-backdrop show"></div>
                 </>
             )}
@@ -164,26 +216,50 @@ const TransactionsIndex: FC = () => {
                     <div className="modal show d-block" tabIndex={-1} role="dialog">
                         <div className="modal-dialog modal-dialog-centered" role="document">
                             <div className="modal-content rounded-4 border-0 shadow">
+
                                 <div className="modal-header border-0">
                                     <h5 className="modal-title fw-bold">Cancel Order</h5>
-                                    <button type="button" className="btn-close" onClick={() => setShowCancelModal(false)} aria-label="Close"></button>
+                                    <button
+                                        type="button"
+                                        className="btn-close"
+                                        onClick={() => setShowCancelModal(false)}
+                                        aria-label="Close"
+                                    />
                                 </div>
+
                                 <div className="modal-body text-center">
-                                    <p className="mb-0 fs-5">Are you sure want to cancel this order?</p>
+                                    <p className="mb-0 fs-5">
+                                        Are you sure want to cancel this order?
+                                    </p>
                                 </div>
+
                                 <div className="modal-footer border-0 justify-content-center">
-                                    <button type="button" className="btn btn-secondary rounded-pill px-4" onClick={() => setShowCancelModal(false)}>Close</button>
-                                    <button type="button" className="btn btn-danger rounded-pill px-4" onClick={confirmCancel} disabled={isPending}>
+                                    <button
+                                        type="button"
+                                        className="btn btn-secondary rounded-pill px-4"
+                                        onClick={() => setShowCancelModal(false)}
+                                    >
+                                        Close
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        className="btn btn-danger rounded-pill px-4"
+                                        onClick={confirmCancel}
+                                        disabled={isPending}
+                                    >
                                         {isPending ? 'Cancelling...' : 'Yes, Cancel'}
                                     </button>
                                 </div>
+
                             </div>
                         </div>
                     </div>
+
                     <div className="modal-backdrop show"></div>
                 </>
             )}
-        </div>
+        </div >
     )
 }
 

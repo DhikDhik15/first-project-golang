@@ -138,17 +138,7 @@ const TransactionsCreate: FC = () => {
                                     <label htmlFor="status" className="form-label">
                                         Status
                                     </label>
-                                    <select
-                                        id="status"
-                                        name="status"
-                                        className="form-select"
-                                        value={status}
-                                        onChange={(e) => setStatus(e.target.value)}
-                                    >
-                                        <option value="">Choose...</option>
-                                        <option value="pending">Pending</option>
-                                        <option value="completed">Completed</option>
-                                    </select>
+                                    <input type="text" className="form-control" value={status} readOnly />
                                 </div>
                                 <div className="mb-3">
                                     <label className="form-label">Total</label>
