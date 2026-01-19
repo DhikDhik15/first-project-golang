@@ -9,16 +9,16 @@ import Cookies from 'js-cookie';
 import { PaginationResponse, User } from '../../types/users';
 
 interface UseUsersParams {
-    page?: number
-    search?: string
-    sort?: string
-    order?: 'asc' | 'desc'
+  page?: number
+  search?: string
+  sort?: string
+  order?: 'asc' | 'desc'
 }
 
 //hook useUsers dengan return type User
 export const useUsers = ({
-    page = 1,
-    search = '',
+  page = 1,
+  search = '',
   sort = 'id',
   order = 'desc',
 }: UseUsersParams) => {

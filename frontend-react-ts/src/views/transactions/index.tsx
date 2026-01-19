@@ -2,7 +2,7 @@ import { FC, useState } from "react";
 
 import SidebarMenu from '../../../components/SidebarMenu';
 
-import { useTransaction, Transaction } from "../../hooks/transaction/useTransaction";
+import { useTransaction } from "../../hooks/transaction/useTransaction";
 import { useTransactionProcess } from "../../hooks/transaction/useTransactionProcess";
 import { useTransactionCancel } from "../../hooks/transaction/useTransactionCancel";
 import { formatDateID } from '../../../helpers/date';
@@ -15,6 +15,8 @@ import { ImCancelCircle } from "react-icons/im";
 import { LuClock3, LuFilePlus } from "react-icons/lu";
 import { useQueryClient } from "@tanstack/react-query";
 
+import { User, Product, Transaction } from "../../types/transactions";
+
 const TransactionsIndex: FC = () => {
 
     // state for process modal
@@ -26,8 +28,18 @@ const TransactionsIndex: FC = () => {
     // state for cancel modal
     const [showCancelModal, setShowCancelModal] = useState(false);
 
+    const [page, setPage] = useState(1);
+    const [search, setSearch] = useState('');
+    const [sort, setSort] = useState('id');
+    const [order, setOrder] = useState<'asc' | 'desc'>('desc');
+
     // hook useTransaction
-    const { data: transactions } = useTransaction();
+    const { data: transactions } = useTransaction({
+        page,
+        search,
+        sort,
+        order,
+    });
 
     // hook useTransactionProcess
     const { mutate: updateTransaction } = useTransactionProcess();
@@ -92,68 +104,100 @@ const TransactionsIndex: FC = () => {
                                         <th scope="col">Product</th>
                                         <th scope="col">Quantity</th>
                                         <th scope="col">Price</th>
-                                        <th scope="col" style={{ width: "11%" }}>Payment</th>
-                                        <th scope="col">Start Date</th>
-                                        <th scope="col">End Date</th>
-                                        <th scope="col">Rent Status</th>
+                                        <th scope="col" style={{ width: "30%" }}>Payment</th>
+                                        <th scope="col" style={{ width: "30%" }}>Start Date</th>
+                                        <th scope="col" style={{ width: "30%" }}>End Date</th>
+                                        <th scope="col" style={{ width: "30%" }}>Rent Status</th>
                                         <th scope="col" style={{ width: "5%" }}>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {
-                                        transactions?.map((transaction: Transaction) => (
-                                            <tr key={transaction.id}>
-                                                <td>{transaction.user.name}</td>
-                                                <td>{transaction.product.name}</td>
-                                                <td>{transaction.quantity}</td>
-                                                <td>{formatRupiah(transaction.price)}</td>
-                                                <td>
-                                                    {
-                                                        transaction.status === 'pending' ? (
+                                        transactions?.data?.length ? (
+                                            transactions?.data?.map((transaction: Transaction) => (
+                                                <tr key={transaction.id}>
+                                                    <td>{transaction.user.name}</td>
+                                                    <td>{transaction.product.name}</td>
+                                                    <td>{transaction.quantity}</td>
+                                                    <td>{formatRupiah(transaction.price)}</td>
+                                                    <td>
+                                                        {
+                                                            transaction.status === 'pending' ? (
+                                                                <>
+                                                                    <LuClock3 className="text-warning" /> {transaction.status}
+                                                                </>
+                                                            ) : transaction.status === 'paid' ? (
+                                                                <>
+                                                                    <FaCheck className="text-success" /> {transaction.status}
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    <ImCancelCircle className="text-danger" /> {transaction.status}
+                                                                </>
+                                                            )
+                                                        }
+                                                    </td>
+                                                    <td>{formatDateID(transaction.start_date)}</td>
+                                                    <td>{formatDateID(transaction.end_date)}</td>
+                                                    <td>{transaction.is_return ? 'Returned' : 'Not Returned'}</td>
+                                                    <td>
+                                                        {transaction.status !== 'paid' && (
                                                             <>
-                                                                <LuClock3 className="text-warning" /> {transaction.status}
-                                                            </>
-                                                        ) : transaction.status === 'paid' ? (
-                                                            <>
-                                                                <FaCheck className="text-success" /> {transaction.status}
-                                                            </>
-                                                        ) : (
-                                                            <>
-                                                                <ImCancelCircle className="text-danger" /> {transaction.status}
-                                                            </>
-                                                        )
-                                                    }
-                                                </td>
-                                                <td>{formatDateID(transaction.start_date)}</td>
-                                                <td>{formatDateID(transaction.end_date)}</td>
-                                                <td>{transaction.is_return ? 'Returned' : 'Not Returned'}</td>
-                                                <td>
-                                                    {transaction.status !== 'paid' && (
-                                                        <>
-                                                            <button
-                                                                onClick={() => handleProcess(transaction.id)}
-                                                                title="Process"
-                                                                className="btn p-0 border-0 bg-transparent"
-                                                                style={{ marginRight: "5px" }}
-                                                            >
-                                                                <FaPaperPlane className="text-primary" />
-                                                            </button>
+                                                                <button
+                                                                    onClick={() => handleProcess(transaction.id)}
+                                                                    title="Process"
+                                                                    className="btn p-0 border-0 bg-transparent"
+                                                                    style={{ marginRight: "5px" }}
+                                                                >
+                                                                    <FaPaperPlane className="text-primary" />
+                                                                </button>
 
-                                                            <button
-                                                                onClick={() => handleCancel(transaction.id)}
-                                                                title="Cancel"
-                                                                className="btn p-0 border-0 bg-transparent"
-                                                                style={{ marginRight: "5px" }}
-                                                            >
-                                                                <ImCancelCircle className="text-danger" />
-                                                            </button>
-                                                        </>
-                                                    )}
+                                                                <button
+                                                                    onClick={() => handleCancel(transaction.id)}
+                                                                    title="Cancel"
+                                                                    className="btn p-0 border-0 bg-transparent"
+                                                                    style={{ marginRight: "5px" }}
+                                                                >
+                                                                    <ImCancelCircle className="text-danger" />
+                                                                </button>
+                                                            </>
+                                                        )}
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        ) : (
+                                            <tr>
+                                                <td colSpan={9} className="text-center">
+                                                    No data available
                                                 </td>
                                             </tr>
-                                        ))
+                                        )
                                     }
                                 </tbody>
+                                <div className="w-100 d-flex align-items-center justify-content-between mt-3">
+                                    <button
+                                        className="btn btn-sm btn-secondary"
+                                        disabled={page === 1}
+                                        onClick={() => setPage((p) => p - 1)}
+                                        style={{ minWidth: 70 }}
+                                    >
+                                        Prev
+                                    </button>
+
+                                    <span className="text-nowrap fw-medium">
+                                        Page {transactions?.page} of {transactions?.total_page}
+                                    </span>
+
+                                    <button
+                                        className="btn btn-sm btn-secondary"
+                                        disabled={page === transactions?.total_page}
+                                        onClick={() => setPage((p) => p + 1)}
+                                        style={{ minWidth: 70 }}
+                                    >
+                                        Next
+                                    </button>
+                                </div>
+
                             </table>
                         </div>
                     </div>

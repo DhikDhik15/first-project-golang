@@ -11,20 +11,25 @@ import (
 )
 
 func FindProducts(c *gin.Context) {
-	var products []models.Product
-	database.DB.Find(&products)
-	if products == nil {
-		c.JSON(http.StatusNotFound, structs.ErrorResponse{
-			Success: false,
-			Message: "Products not found",
-			Errors:  nil,
+	result, err := helpers.PaginateOffset[models.Product](
+		c,
+		database.DB.Model(&models.Product{}),
+		[]string{"name", "description", "price", "stock"},
+		[]string{"id"},
+	)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"message": err.Error(),
 		})
 		return
 	}
-	c.JSON(http.StatusOK, structs.SuccessResponse{
-		Success: true,
-		Message: "Lists Data Products",
-		Data:    products,
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"message": "List Products",
+		"data":    result,
 	})
 }
 

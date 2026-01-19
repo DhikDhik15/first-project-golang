@@ -4,60 +4,62 @@ import Api from "../../../services/api";
 
 import Cookies from "js-cookie";
 
-export interface User {
-    id: number;
-    name: string;
-    email: string;
+import { Transaction, User, Product, TransactionPagination } from "../../types/transactions";
+
+interface UseTransactionParams {
+    page?: number
+    search?: string
+    sort?: string
+    order?: 'asc' | 'desc'
 }
 
-export interface Product {
-    id: number;
-    name: string;
-    price: number;
-}
-
-export interface Transaction {
-    id: number;
-    user_id: number;
-    product_id: number;
-    quantity: number;
-    price: number;
-    status: string;
-    start_date: string;
-    end_date: string;
-    total: number;
-    user: User;
-    product: Product;
-}
-
-export const useTransaction = () => {
-    return useQuery<Transaction[], Error>({
-        queryKey: ['transactions'],
+export const useTransaction = ({
+    page = 1,
+    search = '',
+    sort = 'id',
+    order = 'desc',
+}: UseTransactionParams) => {
+    return useQuery<TransactionPagination, Error>({
+        queryKey: ['transactions', page, search, sort, order],
         queryFn: async () => {
             const token = Cookies.get('token');
+
             const response = await Api.get('/api/transactions', {
+                params: {
+                    page,
+                    q: search,
+                    sort,
+                    order,
+                },
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            return response.data.data.map((item: any) => ({
-                id: item.id,
-                quantity: item.quantity,
-                price: item.price,
-                status: item.status,
-                start_date: item.start_date,
-                end_date: item.end_date,
-                is_return: item.is_return,
-                is_late: item.is_late,
-                user: {
-                    id: item.User.id,
-                    name: item.User.name,
-                },
-                product: {
-                    id: item.Product.id,
-                    name: item.Product.name,
-                },
-            }));
+
+            const pagination = response.data.data;
+
+            return {
+                ...pagination,
+                data: pagination.data.map((item: any) => ({
+                    id: item.id,
+                    quantity: item.quantity,
+                    price: item.price,
+                    status: item.status,
+                    start_date: item.start_date,
+                    end_date: item.end_date,
+                    is_return: item.is_return,
+                    is_late: item.is_late,
+                    user: {
+                        id: item.User?.id,
+                        name: item.User?.name,
+                    },
+                    product: {
+                        id: item.Product?.id,
+                        name: item.Product?.name,
+                    },
+                })),
+            };
         },
+        keepPreviousData: true,
     });
-}
+};

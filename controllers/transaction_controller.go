@@ -13,24 +13,25 @@ import (
 )
 
 func FindTransactions(c *gin.Context) {
-	var transactions []models.Transaction
+	result, err := helpers.PaginateOffset[models.Transaction](
+		c,
+		database.DB.Preload("User").Preload("Product").Find(&models.Transaction{}),
+		[]string{"user_id", "product_id", "quantity", "price", "total", "status", "start_date", "end_date", "created_at", "updated_at"},
+		[]string{"id"},
+	)
 
-	database.DB.
-		Preload("User").
-		Preload("Product").
-		Find(&transactions)
-	if transactions == nil {
-		c.JSON(http.StatusNotFound, structs.ErrorResponse{
-			Success: false,
-			Message: "Transactions not found",
-			Errors:  nil,
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"message": err.Error(),
 		})
 		return
 	}
-	c.JSON(http.StatusOK, structs.SuccessResponse{
-		Success: true,
-		Message: "Lists Data Transactions",
-		Data:    transactions,
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"message": "List Transactions",
+		"data":    result,
 	})
 }
 
