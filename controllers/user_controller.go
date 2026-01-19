@@ -14,17 +14,25 @@ import (
 
 func FindUsers(c *gin.Context) {
 
-	// Inisialisasi slice untuk menampung data user
-	var users []models.User
+	result, err := helpers.PaginateOffset[models.User](
+		c,
+		database.DB.Model(&models.User{}),
+		[]string{"name", "email"},
+		[]string{"id"},
+	)
 
-	// Ambil data user dari database
-	database.DB.Find(&users)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"message": err.Error(),
+		})
+		return
+	}
 
-	// Kirimkan response sukses dengan data user
-	c.JSON(http.StatusOK, structs.SuccessResponse{
-		Success: true,
-		Message: "Lists Data Users",
-		Data:    users,
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"message": "List Users",
+		"data":    result,
 	})
 }
 

@@ -6,41 +6,44 @@ import Api from '../../../services/api';
 
 // import js-cookie
 import Cookies from 'js-cookie';
+import { PaginationResponse, User } from '../../types/users';
 
-//interface User
-export interface User {
-    id: number;
-    name: string;
-    username: string;
-    email: string;
-    role: string;
-    address?: string;
+interface UseUsersParams {
+    page?: number
+    search?: string
+    sort?: string
+    order?: 'asc' | 'desc'
 }
 
 //hook useUsers dengan return type User
-export const useUsers = () => {
+export const useUsers = ({
+    page = 1,
+    search = '',
+  sort = 'id',
+  order = 'desc',
+}: UseUsersParams) => {
 
-    return useQuery<User[], Error>({
+  return useQuery<PaginationResponse<User>, Error>({
+    queryKey: ['users', page, search, sort, order],
 
-        //query key
-        queryKey: ['users'],
+    queryFn: async () => {
+      const token = Cookies.get('token')
 
-        //query function
-        queryFn: async () => {
-
-            //get token from cookies
-            const token = Cookies.get('token');
-
-            //get users from api
-            const response = await Api.get('/api/users', {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-
-            //return data
-            return response.data.data as User[];
+      const response = await Api.get('/api/users', {
+        params: {
+          page,
+          q: search,
+          sort,
+          order,
         },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
 
-    });
+      return response.data.data
+    },
+
+    keepPreviousData: true, // ⭐ penting untuk pagination
+  })
 }

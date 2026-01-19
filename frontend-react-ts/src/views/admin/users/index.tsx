@@ -15,8 +15,18 @@ import { LuUserRoundPlus } from "react-icons/lu";
 
 const UsersIndex: FC = () => {
 
+    const [page, setPage] = useState(1)
+    const [search, setSearch] = useState('')
+    const [sort, setSort] = useState('id')
+    const [order, setOrder] = useState<'asc' | 'desc'>('desc')
+
     // get users from useUsers
-    const { data: users, isLoading, isError, error } = useUsers();
+    const { data: users, isLoading, isError, error } = useUsers({
+        page,
+        search,
+        sort,
+        order,
+    })
 
     // modal state
     const [showModal, setShowModal] = useState(false);
@@ -58,10 +68,54 @@ const UsersIndex: FC = () => {
                                 </div>
                             )}
 
+                            {/* Search & Filter */}
+                            <div className="mb-3 d-flex gap-2">
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Search by name or email..."
+                                    value={search}
+                                    onChange={(e) => {
+                                        setSearch(e.target.value);
+                                        setPage(1);
+                                    }}
+                                />
+                                <select
+                                    className="form-select"
+                                    value={sort}
+                                    onChange={(e) => {
+                                        setSort(e.target.value);
+                                        setPage(1);
+                                    }}
+                                >
+                                    <option value="id">Sort by ID</option>
+                                    <option value="name">Sort by Name</option>
+                                    <option value="email">Sort by Email</option>
+                                </select>
+                                <select
+                                    className="form-select"
+                                    value={order}
+                                    onChange={(e) => {
+                                        setOrder(e.target.value as 'asc' | 'desc');
+                                        setPage(1);
+                                    }}
+                                >
+                                    <option value="desc">Descending</option>
+                                    <option value="asc">Ascending</option>
+                                </select>
+                            </div>
+
                             <table className="table table-bordered">
                                 <thead className="bg-dark text-white">
                                     <tr>
-                                        <th scope="col">Full Name</th>
+                                        <th scope="col" style={{ cursor: 'pointer' }}
+                                            onClick={() => {
+                                                setSort('name')
+                                                setOrder(order === 'asc' ? 'desc' : 'asc')
+                                            }}
+                                        >
+                                            Name {sort === 'name' && (order === 'asc' ? '▲' : '▼')}
+                                        </th>
                                         <th scope="col">Email Address</th>
                                         <th scope="col">Address</th>
                                         <th scope="col" style={{ width: "10%" }}>Actions</th>
@@ -69,21 +123,58 @@ const UsersIndex: FC = () => {
                                 </thead>
                                 <tbody>
                                     {
-                                        users?.map((user: User) => (
-                                            <tr key={user.id}>
-                                                <td>{user.name}</td>
-                                                <td>{user.email}</td>
-                                                <td>{user.address ? user.address : "-"}</td>
-                                                <td className="text-center">
-                                                    <div className="d-flex justify-content-center gap-2">
-                                                        <Link to={`/admin/users/edit/${user.id}`}><PiNotePencilDuotone className="text-warning" size={20} /></Link>
-                                                        <button onClick={() => handleShowDetail(user)} className="btn p-0 border-0 bg-transparent"><BiDetail className="text-primary" size={20} /></button>
-                                                    </div>
+                                        users?.data.length ? (
+                                            users.data.map((user: User) => (
+                                                <tr key={user.id}>
+                                                    <td>{user.name}</td>
+                                                    <td>{user.email}</td>
+                                                    <td>{user.address || '-'}</td>
+                                                    <td className="text-center">
+                                                        <div className="d-flex justify-content-center gap-2">
+                                                            <Link to={`/admin/users/edit/${user.id}`}>
+                                                                <PiNotePencilDuotone className="text-warning" size={20} />
+                                                            </Link>
+                                                            <button
+                                                                onClick={() => handleShowDetail(user)}
+                                                                className="btn p-0 border-0 bg-transparent"
+                                                            >
+                                                                <BiDetail className="text-primary" size={20} />
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        ) : (
+                                            <tr>
+                                                <td colSpan={4} className="text-center">
+                                                    No users found
                                                 </td>
                                             </tr>
-                                        ))
+                                        )
                                     }
                                 </tbody>
+                                <div className="w-100 d-flex justify-content-start gap-2 mt-3">
+                                    <button
+                                        className="btn btn-sm btn-secondary"
+                                        disabled={page === 1}
+                                        onClick={() => setPage((p) => p - 1)}
+                                    >
+                                        Prev
+                                    </button>
+
+                                    <span className="align-self-center">
+                                        Page {users?.page} of {users?.total_page}
+                                    </span>
+
+                                    <button
+                                        className="btn btn-sm btn-secondary"
+                                        disabled={page === users?.total_page}
+                                        onClick={() => setPage((p) => p + 1)}
+                                    >
+                                        Next
+                                    </button>
+                                </div>
+
                             </table>
                         </div>
                     </div>
