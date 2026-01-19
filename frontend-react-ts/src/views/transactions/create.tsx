@@ -23,7 +23,7 @@ const TransactionsCreate: FC = () => {
             quantity: quantity,
             price: selectedProduct?.price,
             total: (selectedProduct?.price || 0) * quantity,
-            status: status,
+            status: "pending",
             start_date: new Date(startDate).toISOString(),
             end_date: new Date(endDate).toISOString()
         }, {
@@ -138,7 +138,7 @@ const TransactionsCreate: FC = () => {
                                     <label htmlFor="status" className="form-label">
                                         Status
                                     </label>
-                                    <input type="text" className="form-control" value={status} readOnly />
+                                    <input type="text" className="form-control" value={"pending"} readOnly />
                                 </div>
                                 <div className="mb-3">
                                     <label className="form-label">Total</label>

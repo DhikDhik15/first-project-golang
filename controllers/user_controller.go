@@ -1,11 +1,13 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
 	"santrikoding/backend-api/database"
 	"santrikoding/backend-api/helpers"
 	"santrikoding/backend-api/models"
 	"santrikoding/backend-api/structs"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -204,5 +206,51 @@ func DeleteUser(c *gin.Context) {
 	c.JSON(http.StatusOK, structs.SuccessResponse{
 		Success: true,
 		Message: "User deleted successfully",
+	})
+}
+
+func SearchUser(c *gin.Context) {
+
+	// Ambil parameter name dari query string
+	name := c.Query("name")
+	log.Println(name)
+
+	// Inisialisasi slice untuk menampung data user
+	var users []models.User
+
+	// Cari user berdasarkan name
+	if strings.TrimSpace(name) == "" {
+		c.JSON(http.StatusBadRequest, structs.ErrorResponse{
+			Success: false,
+			Message: "Name parameter is required",
+		})
+		return
+	}
+
+	if err := database.DB.
+		Where("name LIKE ?", "%"+name+"%").
+		Find(&users).Error; err != nil {
+
+		c.JSON(http.StatusInternalServerError, structs.ErrorResponse{
+			Success: false,
+			Message: "Failed to search user",
+			Errors:  helpers.TranslateErrorMessage(err),
+		})
+		return
+	}
+
+	if len(users) == 0 {
+		c.JSON(http.StatusNotFound, structs.ErrorResponse{
+			Success: false,
+			Message: "User not found",
+		})
+		return
+	}
+
+	// Kirimkan response sukses dengan data user
+	c.JSON(http.StatusOK, structs.SuccessResponse{
+		Success: true,
+		Message: "User found",
+		Data:    users,
 	})
 }
