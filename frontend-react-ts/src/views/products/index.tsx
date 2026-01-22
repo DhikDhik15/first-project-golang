@@ -24,9 +24,9 @@ const ProductsIndex: FC = () => {
     const { mutate, isPending } = useProductDelete();
 
     const [page, setPage] = useState(1)
-    const [search, setSearch] = useState('')
-    const [sort, setSort] = useState('id')
-    const [order, setOrder] = useState<'asc' | 'desc'>('desc')
+    const [search] = useState('')
+    const [sort] = useState('id')
+    const [order] = useState<'asc' | 'desc'>('desc')
 
     const { data: products } = useProduct({
         page,
@@ -105,12 +105,12 @@ const ProductsIndex: FC = () => {
                                     </button>
 
                                     <span className="align-self-center">
-                                        Page {products?.page} of {products?.total_page}
+                                        Page {products?.page} of {products?.totalPage}
                                     </span>
 
                                     <button
                                         className="btn btn-sm btn-secondary"
-                                        disabled={page === products?.total_page}
+                                        disabled={page === products?.totalPage}
                                         onClick={() => setPage((p) => p + 1)}
                                     >
                                         Next

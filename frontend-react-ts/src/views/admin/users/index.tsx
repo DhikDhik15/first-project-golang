@@ -8,7 +8,8 @@ import SidebarMenu from '../../../../components/SidebarMenu';
 import { Link } from "react-router";
 
 //import custom hook useUsers and interface User
-import { useUsers, User } from "../../../hooks/user/useUsers";
+import { useUsers } from "../../../hooks/user/useUsers";
+import { User } from "../../../types/users";
 import { BiDetail } from "react-icons/bi";
 import { PiNotePencilDuotone } from "react-icons/pi";
 import { LuUserRoundPlus } from "react-icons/lu";
@@ -163,12 +164,12 @@ const UsersIndex: FC = () => {
                                     </button>
 
                                     <span className="align-self-center">
-                                        Page {users?.page} of {users?.total_page}
+                                        Page {page} of {users?.totalPage}
                                     </span>
 
                                     <button
                                         className="btn btn-sm btn-secondary"
-                                        disabled={page === users?.total_page}
+                                        disabled={page === users?.totalPage}
                                         onClick={() => setPage((p) => p + 1)}
                                     >
                                         Next

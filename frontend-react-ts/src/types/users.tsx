@@ -6,6 +6,7 @@ export interface User {
     email: string;
     role: string;
     address?: string;
+    phone?: string;
 }
 
 //interface PaginationResponse

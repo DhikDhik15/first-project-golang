@@ -6,7 +6,7 @@ import Api from '../../../services/api';
 
 // import js-cookie
 import Cookies from 'js-cookie';
-import { PaginationResponse, User } from '../../types/users';
+import { PaginationResponse } from '../../types/users';
 
 interface UseUsersParams {
   page?: number
@@ -23,10 +23,10 @@ export const useUsers = ({
   order = 'desc',
 }: UseUsersParams) => {
 
-  return useQuery<PaginationResponse<User>, Error>({
+  return useQuery({
     queryKey: ['users', page, search, sort, order],
 
-    queryFn: async () => {
+    queryFn: async (): Promise<PaginationResponse> => {
       const token = Cookies.get('token')
 
       const response = await Api.get('/api/users', {
@@ -44,6 +44,6 @@ export const useUsers = ({
       return response.data.data
     },
 
-    keepPreviousData: true, // ⭐ penting untuk pagination
+    placeholderData: (previousData) => previousData,
   })
 }

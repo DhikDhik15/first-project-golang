@@ -20,6 +20,7 @@ export interface Transaction {
     start_date: string;
     end_date: string;
     total: number;
+    is_return: boolean;
     user: User;
     product: Product;
 }

@@ -4,7 +4,7 @@ import Api from "../../../services/api";
 
 import Cookies from "js-cookie";
 
-import { Transaction, User, Product, TransactionPagination } from "../../types/transactions";
+import { TransactionPagination } from "../../types/transactions";
 
 interface UseTransactionParams {
     page?: number
@@ -19,9 +19,9 @@ export const useTransaction = ({
     sort = 'id',
     order = 'desc',
 }: UseTransactionParams) => {
-    return useQuery<TransactionPagination, Error>({
+    return useQuery({
         queryKey: ['transactions', page, search, sort, order],
-        queryFn: async () => {
+        queryFn: async (): Promise<TransactionPagination> => {
             const token = Cookies.get('token');
 
             const response = await Api.get('/api/transactions', {
@@ -60,6 +60,6 @@ export const useTransaction = ({
                 })),
             };
         },
-        keepPreviousData: true,
+        placeholderData: (previousData) => previousData,
     });
 };

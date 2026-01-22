@@ -15,7 +15,7 @@ import { ImCancelCircle } from "react-icons/im";
 import { LuClock3, LuFilePlus } from "react-icons/lu";
 import { useQueryClient } from "@tanstack/react-query";
 
-import { User, Product, Transaction } from "../../types/transactions";
+import { Transaction } from "../../types/transactions";
 
 const TransactionsIndex: FC = () => {
 
@@ -29,9 +29,9 @@ const TransactionsIndex: FC = () => {
     const [showCancelModal, setShowCancelModal] = useState(false);
 
     const [page, setPage] = useState(1);
-    const [search, setSearch] = useState('');
-    const [sort, setSort] = useState('id');
-    const [order, setOrder] = useState<'asc' | 'desc'>('desc');
+    const [search] = useState('');
+    const [sort] = useState('id');
+    const [order] = useState<'asc' | 'desc'>('desc');
 
     // hook useTransaction
     const { data: transactions } = useTransaction({
@@ -58,8 +58,10 @@ const TransactionsIndex: FC = () => {
     };
 
     const confirmProcess = async () => {
+        if (selectedId === null) return;
+
         setIsPending(false);
-        updateTransaction({ id: selectedId, status: 'success' }, {
+        updateTransaction({ id: selectedId }, {
             onSuccess: () => {
                 queryClient.invalidateQueries({
                     queryKey: ['transactions'],
@@ -71,9 +73,11 @@ const TransactionsIndex: FC = () => {
 
 
     const confirmCancel = async () => {
+        if (selectedId === null) return;
+
         setIsPending(false);
 
-        cancelTransaction({ id: selectedId, status: 'failed' }, {
+        cancelTransaction({ id: selectedId }, {
             onSuccess: () => {
                 queryClient.invalidateQueries({
                     queryKey: ['transactions'],
@@ -183,14 +187,16 @@ const TransactionsIndex: FC = () => {
                                     >
                                         Prev
                                     </button>
+                                    <span className="mx-2"></span>
 
                                     <span className="text-nowrap fw-medium">
-                                        Page {transactions?.page} of {transactions?.total_page}
+                                        Page {page} of {transactions?.totalPage}
                                     </span>
+                                    <span className="mx-2"></span>
 
                                     <button
                                         className="btn btn-sm btn-secondary"
-                                        disabled={page === transactions?.total_page}
+                                        disabled={page === transactions?.totalPage}
                                         onClick={() => setPage((p) => p + 1)}
                                         style={{ minWidth: 70 }}
                                     >

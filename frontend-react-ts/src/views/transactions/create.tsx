@@ -8,12 +8,22 @@ import { useTransactionCreate } from "../../hooks/transaction/useTransactionCrea
 import { useNavigate } from "react-router";
 
 const TransactionsCreate: FC = () => {
-    const { data: users } = useUsers();
-    const { data: products } = useProduct();
+    const { data: users } = useUsers({
+        page: 1,
+        search: '',
+        sort: 'id',
+        order: 'desc'
+    });
+    const { data: products } = useProduct({
+        page: 1,
+        search: '',
+        sort: 'id',
+        order: 'desc'
+    });
     const { mutate } = useTransactionCreate();
 
     const navigate = useNavigate();
-    const [errors, setErrors] = useState<any>({});
+    const [setErrors] = useState<any>({});
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
@@ -38,7 +48,7 @@ const TransactionsCreate: FC = () => {
 
     const handleProductChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const productId = Number(e.target.value); // ⬅️ WAJIB number
-        const product = products?.find(
+        const product = products?.data.find(
             (p: any) => p.id === productId
         );
 
@@ -50,7 +60,6 @@ const TransactionsCreate: FC = () => {
     const [userId, setUserId] = useState<string>("");
     const [startDate, setStartDate] = useState<string>("");
     const [endDate, setEndDate] = useState<string>("");
-    const [status, setStatus] = useState<string>("");
     const endDateValue = new Date(endDate).getTime();
     const startDateValue = new Date(startDate).getTime();
     const dateDiff = endDateValue - startDateValue;
@@ -78,7 +87,7 @@ const TransactionsCreate: FC = () => {
                                         onChange={(e) => setUserId(e.target.value)}
                                     >
                                         <option value="">Choose...</option>
-                                        {users?.map((user: any) => (
+                                        {users?.data.map((user: any) => (
                                             <option key={user.id} value={user.id}>{user.name}</option>
                                         ))}
                                     </select>
@@ -87,7 +96,7 @@ const TransactionsCreate: FC = () => {
                                     <label className="form-label">Product</label>
                                     <select className="form-select" onChange={handleProductChange}>
                                         <option value="">Choose...</option>
-                                        {products?.map((product: any) => (
+                                        {products?.data.map((product: any) => (
                                             <option key={product.id} value={product.id}>
                                                 {product.name}
                                             </option>

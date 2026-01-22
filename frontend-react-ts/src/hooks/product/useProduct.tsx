@@ -4,7 +4,7 @@ import Api from "../../../services/api";
 
 import Cookies from "js-cookie";
 
-import { Product, ProductPagination } from "../../types/products";
+import { ProductPagination } from "../../types/products";
 
 interface UseProductParams {
     page?: number
@@ -19,9 +19,9 @@ export const useProduct = ({
     sort = 'id',
     order = 'desc',
 }: UseProductParams) => {
-    return useQuery<ProductPagination, Error>({
+    return useQuery({
         queryKey: ['products', page, search, sort, order],
-        queryFn: async () => {
+        queryFn: async (): Promise<ProductPagination> => {
             const token = Cookies.get('token')
 
             const response = await Api.get('/api/products', {
@@ -38,7 +38,6 @@ export const useProduct = ({
 
             return response.data.data
         },
-
-        keepPreviousData: true, // ⭐ penting untuk pagination
+        placeholderData: (previousData) => previousData,
     })
 }
