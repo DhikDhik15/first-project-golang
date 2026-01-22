@@ -1,62 +1,169 @@
-//import FC and useState from react
 import { FC, useState } from "react";
-
-//import Link and useLocation from react router dom
 import { Link, useLocation } from "react-router";
-
-//import custom hook useLogout
 import { useLogout } from "../src/hooks/auth/useLogout";
 
 const SidebarMenu: FC = () => {
-
-    //initialize useLogout
     const logout = useLogout();
-
-    //get current location
     const location = useLocation();
 
-    //state for logout modal
     const [showModal, setShowModal] = useState(false);
+    const [isCollapsed, setIsCollapsed] = useState(false);
+
+    const isMobile = window.innerWidth < 768;
 
     const handleLogout = () => {
         logout();
         setShowModal(false);
-    }
+    };
+
+    const MenuItem = ({
+        to,
+        label,
+        icon,
+        active,
+    }: {
+        to: string;
+        label: string;
+        icon: string;
+        active: boolean;
+    }) => (
+        <Link
+            to={to}
+            data-bs-dismiss={isMobile ? "offcanvas" : undefined}
+            className={`list-group-item list-group-item-action d-flex align-items-center gap-3 ${active ? "active" : ""
+                }`}
+        >
+            <i className={`bi ${icon} fs-5`} />
+            {!isCollapsed && <span>{label}</span>}
+        </Link>
+    );
+
+    const menuContent = (
+        <div className="list-group list-group-flush">
+            <MenuItem
+                to="/admin/dashboard"
+                label="Dashboard"
+                icon="bi-speedometer2"
+                active={location.pathname === "/admin/dashboard"}
+            />
+
+            <MenuItem
+                to="/admin/users"
+                label="Users"
+                icon="bi-people"
+                active={location.pathname.startsWith("/admin/users")}
+            />
+
+            <MenuItem
+                to="/admin/products"
+                label="Products"
+                icon="bi-box"
+                active={location.pathname.startsWith("/admin/products")}
+            />
+
+            <MenuItem
+                to="/admin/transactions"
+                label="Transactions"
+                icon="bi-receipt"
+                active={location.pathname.startsWith("/admin/transactions")}
+            />
+
+            <MenuItem
+                to="/admin/reports"
+                label="Reports"
+                icon="bi-bar-chart"
+                active={location.pathname.startsWith("/admin/reports")}
+            />
+
+            <button
+                onClick={() => setShowModal(true)}
+                className="list-group-item list-group-item-action d-flex align-items-center gap-3 text-start"
+            >
+                <i className="bi bi-box-arrow-right fs-5" />
+                {!isCollapsed && <b>Logout</b>}
+            </button>
+        </div>
+    );
 
     return (
         <>
-            <div className="card border-0 rounded-4 shadow-sm">
-                <div className="card-header">
-                    MAIN MENU
-                </div>
-                <div className="card-body">
-                    <div className="list-group">
-                        <Link to="/admin/dashboard" className={`list-group-item list-group-item-action ${location.pathname === '/admin/dashboard' ? 'active' : ''}`} style={location.pathname === '/admin/dashboard' ? { backgroundColor: 'gray', borderColor: 'gray' } : {}}>Dashboard</Link>
-                        <Link to="/admin/users" className={`list-group-item list-group-item-action ${location.pathname.startsWith('/admin/users') ? 'active' : ''}`} style={location.pathname.startsWith('/admin/users') ? { backgroundColor: 'gray', borderColor: 'gray' } : {}}>Users</Link>
-                        <Link to="/admin/products" className={`list-group-item list-group-item-action ${location.pathname.startsWith('/admin/products') ? 'active' : ''}`} style={location.pathname.startsWith('/admin/products') ? { backgroundColor: 'gray', borderColor: 'gray' } : {}}>Products</Link>
-                        <Link to="/admin/transactions" className={`list-group-item list-group-item-action ${location.pathname.startsWith('/admin/transactions') ? 'active' : ''}`} style={location.pathname.startsWith('/admin/transactions') ? { backgroundColor: 'gray', borderColor: 'gray' } : {}}>Transactions</Link>
-                        <Link to="/admin/reports" className={`list-group-item list-group-item-action ${location.pathname.startsWith('/admin/report') ? 'active' : ''}`} style={location.pathname.startsWith('/admin/reports') ? { backgroundColor: 'gray', borderColor: 'gray' } : {}}>Reports</Link>
-                        <button onClick={() => setShowModal(true)} className="list-group-item list-group-item-action text-start" style={{ cursor: 'pointer', border: 'none', background: 'none', width: '100%' }}><b>Logout</b></button>
+            {/* ================= DESKTOP SIDEBAR ================= */}
+            <div className="d-none d-md-block">
+                <div
+                    className="card border-0 rounded-4 shadow-sm h-100"
+                    style={{
+                        width: isCollapsed ? "80px" : "260px",
+                        transition: "width 0.3s",
+                    }}
+                >
+                    <div className="card-header d-flex justify-content-between align-items-center">
+                        {!isCollapsed && <span>MAIN MENU</span>}
+                        <button
+                            className="btn btn-sm btn-light"
+                            onClick={() => setIsCollapsed(!isCollapsed)}
+                        >
+                            <i
+                                className={`bi ${isCollapsed
+                                        ? "bi-chevron-right"
+                                        : "bi-chevron-left"
+                                    }`}
+                            />
+                        </button>
                     </div>
+
+                    <div className="card-body p-0">{menuContent}</div>
                 </div>
             </div>
 
-            {/* Logout Confirmation Modal */}
+            {/* ================= MOBILE OFFCANVAS ================= */}
+            <div
+                className="offcanvas offcanvas-start d-md-none"
+                tabIndex={-1}
+                id="sidebarMenu"
+                style={{ width: "260px" }}
+            >
+                <div className="offcanvas-header">
+                    <h5 className="offcanvas-title">MAIN MENU</h5>
+                    <button
+                        type="button"
+                        className="btn-close"
+                        data-bs-dismiss="offcanvas"
+                    />
+                </div>
+                <div className="offcanvas-body p-0">{menuContent}</div>
+            </div>
+
+            {/* ================= LOGOUT MODAL ================= */}
             {showModal && (
                 <>
-                    <div className="modal show d-block" tabIndex={-1} role="dialog">
-                        <div className="modal-dialog modal-dialog-centered" role="document">
-                            <div className="modal-content rounded-4 border-0 shadow">
-                                <div className="modal-header border-0">
-                                    <h5 className="modal-title fw-bold">Logout Confirmation</h5>
-                                    <button type="button" className="btn-close" onClick={() => setShowModal(false)} aria-label="Close"></button>
+                    <div className="modal show d-block">
+                        <div className="modal-dialog modal-dialog-centered">
+                            <div className="modal-content rounded-4">
+                                <div className="modal-header">
+                                    <h5 className="modal-title">
+                                        Logout Confirmation
+                                    </h5>
+                                    <button
+                                        className="btn-close"
+                                        onClick={() => setShowModal(false)}
+                                    />
                                 </div>
                                 <div className="modal-body text-center">
-                                    <p className="mb-0 fs-5">Are you sure you want to logout?</p>
+                                    Are you sure you want to logout?
                                 </div>
-                                <div className="modal-footer border-0 justify-content-center">
-                                    <button type="button" className="btn btn-secondary px-4" onClick={() => setShowModal(false)}>Cancel</button>
-                                    <button type="button" className="btn btn-danger px-4" onClick={handleLogout}>Yes, Logout</button>
+                                <div className="modal-footer justify-content-center">
+                                    <button
+                                        className="btn btn-secondary"
+                                        onClick={() => setShowModal(false)}
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        className="btn btn-danger"
+                                        onClick={handleLogout}
+                                    >
+                                        Logout
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -65,7 +172,7 @@ const SidebarMenu: FC = () => {
                 </>
             )}
         </>
-    )
-}
+    );
+};
 
 export default SidebarMenu;

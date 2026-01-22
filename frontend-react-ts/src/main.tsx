@@ -8,6 +8,10 @@ import { BrowserRouter } from 'react-router';
 //import QueryClient dan QueryClientProvider dari react-query
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
+// Bootstrap
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
+
 //init QueryClient
 const queryClient = new QueryClient()
 
