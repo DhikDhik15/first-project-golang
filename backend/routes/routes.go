@@ -39,9 +39,6 @@ func SetupRouter() *gin.Engine {
 	// route user update
 	router.PUT("/api/users/:id", middlewares.AuthMiddleware(), controllers.UpdateUser)
 
-	// route search user
-	router.GET("/api/users/search", middlewares.AuthMiddleware(), controllers.SearchUser)
-
 	// route user delete
 	router.DELETE("/api/users/:id", middlewares.AuthMiddleware(), controllers.DeleteUser)
 
@@ -78,11 +75,8 @@ func SetupRouter() *gin.Engine {
 	// route transaction cancel
 	router.PUT("/api/transactions/:id/cancel", middlewares.AuthMiddleware(), controllers.CancelTransaction)
 
-	// route transaction export
-	router.GET("/api/transactions/report", middlewares.AuthMiddleware(), controllers.ReportTransaction)
-
-	// route transaction export
-	router.GET("/api/transactions/export", middlewares.AuthMiddleware(), controllers.ExportTransaction)
+	// route dashboard
+	router.GET("/api/dashboard", middlewares.AuthMiddleware(),controllers.Dashboard)
 
 	return router
 }
