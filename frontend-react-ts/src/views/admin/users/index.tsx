@@ -164,12 +164,12 @@ const UsersIndex: FC = () => {
                                     </button>
 
                                     <span className="align-self-center">
-                                        Page {page} of {users?.totalPage}
+                                        Page {page} of {users?.total_page}
                                     </span>
 
                                     <button
                                         className="btn btn-sm btn-secondary"
-                                        disabled={page === users?.totalPage}
+                                        disabled={page === users?.total_page}
                                         onClick={() => setPage((p) => p + 1)}
                                     >
                                         Next

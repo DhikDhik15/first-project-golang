@@ -105,12 +105,12 @@ const ProductsIndex: FC = () => {
                                     </button>
 
                                     <span className="align-self-center">
-                                        Page {products?.page} of {products?.totalPage}
+                                        Page {products?.page} of {products?.total_page}
                                     </span>
 
                                     <button
                                         className="btn btn-sm btn-secondary"
-                                        disabled={page === products?.totalPage}
+                                        disabled={page === products?.total_page}
                                         onClick={() => setPage((p) => p + 1)}
                                     >
                                         Next

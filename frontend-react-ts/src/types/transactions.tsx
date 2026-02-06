@@ -29,6 +29,6 @@ export interface TransactionPagination {
     data: Transaction[];
     page: number;
     limit: number;
-    totalData: number;
-    totalPage: number;
+    total_data: number;
+    total_page: number;
 }

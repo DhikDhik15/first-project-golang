@@ -14,6 +14,6 @@ export interface PaginationResponse {
     data: User[];
     page: number;
     limit: number;
-    totalData: number;
-    totalPage: number;
+    total_data: number;
+    total_page: number;
 }

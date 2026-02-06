@@ -10,6 +10,6 @@ export interface ProductPagination {
     data: Product[];
     page: number;
     limit: number;
-    totalData: number;
-    totalPage: number;
+    total_data: number;
+    total_page: number;
 }

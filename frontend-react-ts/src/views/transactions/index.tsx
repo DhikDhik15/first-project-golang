@@ -104,14 +104,14 @@ const TransactionsIndex: FC = () => {
                             <table className="table table-bordered">
                                 <thead className="bg-dark text-white">
                                     <tr>
-                                        <th scope="col">User</th>
+                                        <th scope="col" style={{ width: "20%" }}>User</th>
                                         <th scope="col">Product</th>
                                         <th scope="col">Quantity</th>
                                         <th scope="col">Price</th>
-                                        <th scope="col" style={{ width: "30%" }}>Payment</th>
-                                        <th scope="col" style={{ width: "30%" }}>Start Date</th>
-                                        <th scope="col" style={{ width: "30%" }}>End Date</th>
-                                        <th scope="col" style={{ width: "30%" }}>Rent Status</th>
+                                        <th scope="col">Payment</th>
+                                        <th scope="col">Start Date</th>
+                                        <th scope="col">End Date</th>
+                                        <th scope="col">Rent Status</th>
                                         <th scope="col" style={{ width: "5%" }}>Action</th>
                                     </tr>
                                 </thead>
@@ -190,13 +190,13 @@ const TransactionsIndex: FC = () => {
                                     <span className="mx-2"></span>
 
                                     <span className="text-nowrap fw-medium">
-                                        Page {page} of {transactions?.totalPage}
+                                        Page {page} of {transactions?.total_page}
                                     </span>
                                     <span className="mx-2"></span>
 
                                     <button
                                         className="btn btn-sm btn-secondary"
-                                        disabled={page === transactions?.totalPage}
+                                        disabled={page === transactions?.total_page}
                                         onClick={() => setPage((p) => p + 1)}
                                         style={{ minWidth: 70 }}
                                     >
