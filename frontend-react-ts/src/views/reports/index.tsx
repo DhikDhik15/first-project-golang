@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import SidebarMenu from "../../../components/SidebarMenu";
 import { TbFileExport } from "react-icons/tb";
 import { useReport } from "../../hooks/report/useReport";
+import { FaCheck } from "react-icons/fa";
 
 const ReportsIndex: FC = () => {
 
@@ -34,7 +35,7 @@ const ReportsIndex: FC = () => {
                                             <tr key={transaction.id}>
                                                 <td>{transaction.user.name}</td>
                                                 <td>{transaction.product.name}</td>
-                                                <td>{transaction.status}</td>
+                                                <td><FaCheck className="text-success" /> {transaction.status}</td>
                                             </tr>
                                         ))
                                     }

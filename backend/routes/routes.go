@@ -78,5 +78,8 @@ func SetupRouter() *gin.Engine {
 	// route dashboard
 	router.GET("/api/dashboard", middlewares.AuthMiddleware(),controllers.Dashboard)
 
+	// route report transactions
+	router.GET("/api/reports/transactions", middlewares.AuthMiddleware(), controllers.ReportTransaction)
+
 	return router
 }

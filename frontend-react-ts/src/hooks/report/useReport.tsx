@@ -27,7 +27,7 @@ export const useReport = () => {
         queryKey: ['transactions'],
         queryFn: async () => {
             const token = Cookies.get('token');
-            const response = await Api.get('/api/transactions/report', {
+            const response = await Api.get('/api/reports/transactions', {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
